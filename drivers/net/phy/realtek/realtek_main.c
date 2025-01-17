@@ -1249,6 +1249,10 @@ static int rtl822x_aldps_probe(struct phy_device *phydev)
 
 	phy_write_mmd(phydev, MDIO_MMD_VEND1, RTL8221B_PHYCR1, val);
 
+	if (IS_ENABLED(CONFIG_REALTEK_PHY_HWMON) &&
+	    phydev->phy_id != RTL_GENERIC_PHYID)
+		return rtl822x_hwmon_init(phydev);
+
 	return 0;
 }
 
@@ -1654,6 +1658,7 @@ static struct phy_driver realtek_drvs[] = {
 	}, {
 		.match_phy_device = rtl8251b_c45_match_phy_device,
 		.name           = "RTL8251B 5Gbps PHY",
+		.probe		= rtl822x_probe,
 		.get_features   = rtl822x_get_features,
 		.config_aneg    = rtl822x_config_aneg,
 		.read_status    = rtl822x_read_status,
